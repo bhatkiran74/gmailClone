@@ -84,11 +84,11 @@ function Mail() {
                     <h2>subject</h2>
                     <LabelImportantIcon className="mail_important" />
                     <p>title</p>
-                    <p>10pm</p>
+                    <p className="mail_time">10pm</p>
                 </div>
                 <div className="mail_message">
-                    this is message
-                </div>
+                    <p>this is message
+</p>                </div>
 
 
             </div>
