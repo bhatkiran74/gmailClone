@@ -1,54 +1,51 @@
-
-import { Button } from '@material-ui/core';
+import React from 'react';
+import './SendMail.css';
 import CloseIcon from '@material-ui/icons/Close';
-import React from 'react'
-import './SendMail.css'
-
-import { useForm } from 'react-hook-form'
-
-
+import { Button } from '@material-ui/core';
+import { useForm } from 'react-hook-form';
+import { useDispatch } from 'react-redux';
+import { closeSendMessage } from './features/mailSlice';
 
 function SendMail() {
-
-    const { register, handleSubmit, watch, errors } = useForm()
+    const { register, handleSubmit, watch, errors } = useForm();
 
     const onSubmit = (data) => {
-        console.log(data);
-    }
+        fetch("http://localhost:8080/addMessage", {
+            method: "POST",
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        }).then(alert("Mail sent successfully"))
+            .then(window.location.reload());
+    };
+
+    const dispatch = useDispatch();
 
     return (
-        <div className="send_mail">
-            <div className="send_mail_header">
-                <h3>New Mail</h3>
-
-                <CloseIcon className="send_mail_close" />
-
+        <div className="sendMail">
+            <div className="sendMail_header">
+                <h3>New Message</h3>
+                <CloseIcon className="sendMail_close" onClick={() => dispatch(closeSendMessage())} />
             </div>
+
             <form onSubmit={handleSubmit(onSubmit)}>
-                <input name="to" placeholder="To" type="text" ref={register({ required: true })} />
-                {errors.to && <p className="send_mail_errors">to is required</p>}
+                <input name="to" type="email" placeholder="To" ref={register({ required: true })} />
+                {errors.to && <p className="sendMail_error">To is required</p>}
 
+                <input name="subject" type="text" placeholder="Subject" ref={register({ required: true })} />
+                {errors.subject && <p className="sendMail_error">Subject is required</p>}
 
-                <input name="subject" placeholder="Subject" type="text" ref={register({ required: true })} />
-                {errors.subject && (<p className="send_mail_errors">subject is required</p>)}
+                <input name="message" type="text" placeholder="Message..." className="sendMail_message" ref={register({ required: true })} />
+                {errors.message && <p className="sendMail_error">Message is required</p>}
 
-
-                <input name="message" placeholder="Message..." className="send_mail_message" type="text" ref={register({ required: true })} />
-                {errors.message && (<p className="send_mail_errors">message is required</p>)}
-
-                <div className="send_mail_options">
-                    <Button className="send_mail_button"
-                        variant="contained"
-                        color="primary"
-                        type="submit"
-                    >Send</Button>
-
+                <div className="sendMail_options">
+                    <Button type="submit" className="sendMail_send" variant="contained" color="primary">Send</Button>
                 </div>
             </form>
-
-
         </div>
     )
 }
 
-export default SendMail
+export default SendMail;
